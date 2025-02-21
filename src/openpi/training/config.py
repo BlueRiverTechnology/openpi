@@ -224,7 +224,7 @@ class LeRobotAlohaDataConfig(DataConfigFactory):
         )
     )
     # Action keys that will be used to read the action sequence from the dataset.
-    action_sequence_keys: Sequence[str] = ("actions",)
+    action_sequence_keys: Sequence[str] = ("action",)
 
     @override
     def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
@@ -295,10 +295,9 @@ class LeRobotLiberoDataConfig(DataConfigFactory):
 
 @dataclasses.dataclass(frozen=True)
 class LeRobotKochDataConfig(DataConfigFactory):
-    @override
-    def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
-        # Make inputs look like they come from the Libero environment
-        repack_transform = _transforms.Group(
+    # Repack transforms.
+    repack_transforms: tyro.conf.Suppress[_transforms.Group] = dataclasses.field(
+        default=_transforms.Group(
             inputs=[
                 _transforms.RepackTransform(
                     {
@@ -308,12 +307,35 @@ class LeRobotKochDataConfig(DataConfigFactory):
                             "cam_right_wrist": "observation.images.back_near_tractor",
                         },
                         "state": "observation.state",
-                        "action": "action",
+                        "actions": "action",
                         "prompt": "prompt",
                     }
                 )
             ]
         )
+    )
+    # Action keys that will be used to read the action sequence from the dataset.
+    action_sequence_keys: Sequence[str] = ("action",)
+
+    @override
+    def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
+        # # Make inputs look like they come from the Libero environment
+        # repack_transform = _transforms.Group(
+        #     inputs=[
+        #         _transforms.RepackTransform(
+        #             {
+        #                 "images": {
+        #                     "cam_high": "observation.images.front",
+        #                     "cam_left_wrist": "observation.images.low",
+        #                     "cam_right_wrist": "observation.images.back_near_tractor",
+        #                 },
+        #                 "state": "observation.state",
+        #                 "action": "action",
+        #                 "prompt": "prompt",
+        #             }
+        #         )
+        #     ]
+        # )
 
         # Prepare data for policy training
         # Convert images to uint8 numpy arrays, add masks
@@ -333,9 +355,10 @@ class LeRobotKochDataConfig(DataConfigFactory):
 
         return dataclasses.replace(
             self.create_base_config(assets_dirs),
-            repack_transforms=repack_transform,
+            repack_transforms=self.repack_transforms,
             data_transforms=data_transforms,
             model_transforms=model_transforms,
+            action_sequence_keys=self.action_sequence_keys,
         )
 
 

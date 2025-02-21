@@ -41,7 +41,7 @@ class KochInputs(transforms.DataTransformFn):
 
         # Get the state. We are padding from 8 to the model action dim.
         # For pi0-FAST, we don't pad the state (action_dim = 7, which is < 8, so pad is skipped).
-        state = transforms.pad_to_dim(data["observation.state"], self.action_dim)
+        state = transforms.pad_to_dim(data["state"], self.action_dim)
 
         # Possibly need to parse images to uint8 (H,W,C) since LeRobot automatically
         # stores as float32 (C,H,W), gets skipped for policy inference
