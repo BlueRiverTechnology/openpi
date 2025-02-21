@@ -301,11 +301,14 @@ class LeRobotKochDataConfig(DataConfigFactory):
             inputs=[
                 _transforms.RepackTransform(
                     {
-                        "images": {
-                            "cam_high": "observation.images.front",
-                            "cam_left_wrist": "observation.images.low",
-                            "cam_right_wrist": "observation.images.back_near_tractor",
-                        },
+                        # "images": {
+                        #     "cam_high": "observation.images.front",
+                        #     "cam_left_wrist": "observation.images.low",
+                        #     "cam_right_wrist": "observation.images.back_near_tractor",
+                        # },
+                        "observation.images.front": "observation.images.front",
+                        "observation.images.low": "observation.images.low",
+                        "observation.images.back_near_tractor": "observation.images.back_near_tractor",
                         "state": "observation.state",
                         "actions": "action",
                         "prompt": "prompt",
