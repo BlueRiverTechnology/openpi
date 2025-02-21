@@ -306,6 +306,7 @@ class LeRobotKochDataConfig(DataConfigFactory):
                         #     "cam_left_wrist": "observation.images.low",
                         #     "cam_right_wrist": "observation.images.back_near_tractor",
                         # },
+
                         "observation.images.front": "observation.images.front",
                         "observation.images.low": "observation.images.low",
                         "observation.images.back_near_tractor": "observation.images.back_near_tractor",
