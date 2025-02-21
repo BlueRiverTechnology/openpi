@@ -224,7 +224,7 @@ class LeRobotAlohaDataConfig(DataConfigFactory):
         )
     )
     # Action keys that will be used to read the action sequence from the dataset.
-    action_sequence_keys: Sequence[str] = ("action",)
+    action_sequence_keys: Sequence[str] = ("actions",)
 
     @override
     def create(self, assets_dirs: pathlib.Path, model_config: _model.BaseModelConfig) -> DataConfig:
@@ -302,10 +302,13 @@ class LeRobotKochDataConfig(DataConfigFactory):
             inputs=[
                 _transforms.RepackTransform(
                     {
-                        "observation/image": "image",
-                        "observation/wrist_image": "wrist_image",
-                        "observation/state": "state",
-                        "actions": "actions",
+                        "images": {
+                            "cam_high": "observation.images.front",
+                            "cam_left_wrist": "observation.images.low",
+                            "cam_right_wrist": "observation.images.back_near_tractor",
+                        },
+                        "state": "observation.state",
+                        "action": "action",
                         "prompt": "prompt",
                     }
                 )
@@ -484,17 +487,6 @@ _CONFIGS = [
         ),
     ),
     TrainConfig(
-        name="debug",
-        data=FakeDataConfig(),
-        batch_size=2,
-        model=pi0.Pi0Config(paligemma_variant="dummy", action_expert_variant="dummy"),
-        save_interval=100,
-        overwrite=True,
-        exp_name="debug",
-        num_train_steps=10,
-        wandb_enabled=False,
-    ),
-    TrainConfig(
         name="pi0_koch_debug",
         model=pi0.Pi0Config(),
         data=LeRobotKochDataConfig(
@@ -512,7 +504,7 @@ _CONFIGS = [
         overwrite=True,
         exp_name="debug",
         num_train_steps=10,
-        wandb_enabled=False,
+        # wandb_enabled=False,
     ),
     #
     # Fine-tuning Libero configs.
