@@ -1,5 +1,6 @@
 import dataclasses
 import logging
+from absl import logging
 
 from openpi_client import action_chunk_broker
 from openpi_client import websocket_client_policy as _websocket_client_policy
@@ -12,7 +13,8 @@ import env as _env
 
 @dataclasses.dataclass
 class Args:
-    host: str = "0.0.0.0"
+    #host: str = "pixel03.users.stc02.bluerivertech.info"
+    host: str = "localhost"
     port: int = 8000
 
     action_horizon: int = 25
@@ -22,10 +24,6 @@ class Args:
 
 
 def main(args: Args) -> None:
-
-    environment=_env.KochRealEnvironment()
-    del environment
-
     ws_client_policy = _websocket_client_policy.WebsocketClientPolicy(
         host=args.host,
         port=args.port,
@@ -42,7 +40,7 @@ def main(args: Args) -> None:
             )
         ),
         subscribers=[],
-        max_hz=50,
+        max_hz=30,
         num_episodes=args.num_episodes,
         max_episode_steps=args.max_episode_steps,
     )
@@ -51,5 +49,6 @@ def main(args: Args) -> None:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, force=True)
+    logging.use_absl_handler()
+    logging.set_verbosity(1)
     tyro.cli(main)

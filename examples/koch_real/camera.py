@@ -42,6 +42,7 @@ class CameraCapture(object):
             logging.info('Opening')
             if not cap.isOpened():
                 raise IOError("Cannot open webcam")
+            logging.info('Opened')
 
             shared_array = np.ndarray(
                 (self.frame_shape[0], self.frame_shape[1],
@@ -50,20 +51,21 @@ class CameraCapture(object):
                 buffer=self.__shared_array.get_obj())
 
             t = time.time()
-            os.nice(-20)
+            #os.nice(-20)
             while True:
                 ret, frame = cap.read()
                 new_time = time.time()
                 if not ret:
                     break
 
-                logging.info('Inserting frame %s: dt: %f hz: %f', frame.shape,
-                             (new_time - t), 1.0 / (new_time - t))
+                #logging.info('Inserting frame %s: dt: %f hz: %f', frame.shape,
+                             #(new_time - t), 1.0 / (new_time - t))
                 t = new_time
                 with self.__lock:  # Protect access to shared memory
                     # Flatten the frame and copy it into the shared array
                     flat_frame = frame.flatten()
                     self.__shared_frame_id.value += 1
+                    #logging.info('Frame: %s', frame)
                     np.copyto(shared_array, frame)
 
             cap.release()
@@ -76,7 +78,7 @@ class CameraCapture(object):
             (self.frame_shape[0], self.frame_shape[1], self.frame_shape[2]),
             dtype=np.uint8,
             buffer=self.__shared_array.get_obj())
-        logging.info('Grabbing frame')
+        #logging.info('Grabbing frame')
         with self.__lock:  # Protect access to shared memory
             frame = shared_array.copy()  # Copy the array.
             frame_id = self.__shared_frame_id.value
@@ -85,7 +87,8 @@ class CameraCapture(object):
             self._last_frame_id = frame_id
             return frame
         else:
-            return None
+            #return None
+            return frame
 
 
 def main(argv):

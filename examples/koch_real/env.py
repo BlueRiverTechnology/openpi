@@ -1,6 +1,7 @@
 from typing import List, Optional  # noqa: UP035
 
 import einops
+import logging
 from openpi_client import image_tools
 from openpi_client.runtime import environment as _environment
 from typing_extensions import override
@@ -50,10 +51,15 @@ class KochRealEnvironment(_environment.Environment):
             )
             obs["images"][cam_name] = einops.rearrange(img, "h w c -> c h w")
 
-        return {
+        result = {
             "state": obs["qpos"],
-            "images": obs["images"],
+            "observation.images.front": obs["images"]["front"],
+            "observation.images.low": obs["images"]["low"],
+            "observation.images.back_near_tractor": obs["images"]["back_near_tractor"],
+            "prompt": "Hi ben",
         }
+        #logging.info('get_observation: %s', result)
+        return result
 
     @override
     def apply_action(self, action: dict) -> None:

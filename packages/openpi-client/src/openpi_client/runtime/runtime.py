@@ -31,7 +31,9 @@ class Runtime:
 
     def run(self) -> None:
         """Runs the runtime loop continuously until stop() is called or the environment is done."""
+        logging.info('Running')
         for _ in range(self._num_episodes):
+            logging.info('Running episode')
             self._run_episode()
 
         # Final reset, this is important for real environments to move the robot to its home position.
@@ -51,13 +53,16 @@ class Runtime:
         """Runs a single episode."""
         logging.info("Starting episode...")
         self._environment.reset()
+        logging.info('Reset environment')
         self._agent.reset()
+        logging.info('Reset agent')
         for subscriber in self._subscribers:
             subscriber.on_episode_start()
 
         self._in_episode = True
         self._episode_steps = 0
         step_time = 1 / self._max_hz if self._max_hz > 0 else 0
+        logging.info('Dt: %f', step_time)
         last_step_time = time.time()
 
         while self._in_episode:
@@ -79,6 +84,7 @@ class Runtime:
 
     def _step(self) -> None:
         """A single step of the runtime loop."""
+        logging.info('Starting step')
         observation = self._environment.get_observation()
         action = self._agent.get_action(observation)
         self._environment.apply_action(action)
