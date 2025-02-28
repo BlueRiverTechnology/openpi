@@ -56,7 +56,7 @@ class KochRealEnvironment(_environment.Environment):
             "observation.images.front": obs["images"]["front"],
             "observation.images.low": obs["images"]["low"],
             "observation.images.back_near_tractor": obs["images"]["back_near_tractor"],
-            "prompt": "Hi ben",
+            "prompt": "Load hay bale onto wagon.",
         }
         #logging.info('get_observation: %s', result)
         return result
