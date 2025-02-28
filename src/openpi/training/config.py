@@ -715,6 +715,24 @@ _CONFIGS = [
         ema_decay=None,
     ),
     TrainConfig(
+        name="pi0_koch_low_mem_finetune_v116_100k",
+        model=pi0.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
+        data=LeRobotKochDataConfig(
+            repo_id="hay_bale/v116",
+            base_config=DataConfig(
+                local_files_only=True,  # Set to True for local-only datasets.
+                prompt_from_task=True,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=100_000,
+        keep_period=10_000,
+        freeze_filter=pi0.Pi0Config(
+            paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"
+        ).get_freeze_filter(),
+        ema_decay=None,
+    ),
+    TrainConfig(
         name="pi0_koch_low_mem_finetune_v116_micro",
         model=pi0.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
         data=LeRobotKochDataConfig(
@@ -774,6 +792,54 @@ _CONFIGS = [
         ),
         weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_base/params"),
         num_train_steps=30_000,
+        batch_size=32,
+        fsdp_devices=4,
+    ),
+    TrainConfig(
+        name="pi0_koch_v116_fsdp_4_bs_32_100k",
+        model=pi0.Pi0Config(),
+        data=LeRobotKochDataConfig(
+            repo_id="hay_bale/v116",
+            base_config=DataConfig(
+                local_files_only=True,  # Set to True for local-only datasets.
+                prompt_from_task=True,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=100_000,
+        keep_period=10_000,
+        batch_size=32,
+        fsdp_devices=4,
+    ),
+    TrainConfig(
+        name="pi0_koch_v116_fsdp_4_bs_32_200k",
+        model=pi0.Pi0Config(),
+        data=LeRobotKochDataConfig(
+            repo_id="hay_bale/v116",
+            base_config=DataConfig(
+                local_files_only=True,  # Set to True for local-only datasets.
+                prompt_from_task=True,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=200_000,
+        keep_period=10_000,
+        batch_size=32,
+        fsdp_devices=4,
+    ),
+    TrainConfig(
+        name="pi0_koch_v116_fsdp_4_bs_32_500k",
+        model=pi0.Pi0Config(),
+        data=LeRobotKochDataConfig(
+            repo_id="hay_bale/v116",
+            base_config=DataConfig(
+                local_files_only=True,  # Set to True for local-only datasets.
+                prompt_from_task=True,
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi0_base/params"),
+        num_train_steps=500_000,
+        keep_period=10_000,
         batch_size=32,
         fsdp_devices=4,
     ),
